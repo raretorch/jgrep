@@ -1,3 +1,5 @@
+package comp.src;
+
 import java.lang.*;
 
 class Main {
@@ -11,7 +13,7 @@ class Main {
     translateArgs(args);
   }
 
-  static String[] translateArgs(String[] args) {
+  static String[] translateArgs(String[] args) { //setting parameters into variables
     int paramCount = 0;
     int argsCount = 0;
     int i = 0;

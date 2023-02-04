@@ -1,6 +1,6 @@
 # tasks in root folder
 /tasks.txt
 # ignore .class files
-*.class
+/comp/
 # ignore compile bash script
 /run.sh
