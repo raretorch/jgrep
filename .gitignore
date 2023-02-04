@@ -2,5 +2,3 @@
 /tasks.txt
 # ignore .class files
 /comp/
-# ignore compile bash script
-/run.sh
