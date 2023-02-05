@@ -20,6 +20,7 @@ class Main {
   static final char[] ANSI_RED_CHARS = ANSI_RED.toCharArray();
   static final String ANSI_RESET = "\u001B[0m";//"\u001B[0m";
   static final char[] ANSI_RESET_CHARS = ANSI_RESET.toCharArray();
+  static boolean allText = false;
   static boolean verbose = false;
   static boolean ignoreCase = false;
 
@@ -33,6 +34,9 @@ class Main {
     }
     if (paramFinder("-c")) { //setting ignoreCase
       ignoreCase = true;
+    }
+    if (paramFinder("-A")) { //setting print full file
+      allText = true;
     }
     if (verbose){setParametersLog();}
     if (paramFinder("-f")) { //read text from file
@@ -54,6 +58,24 @@ class Main {
       System.out.println("=========================");
     }
     System.out.println("||||||||||||||||||||||||||||");
+    if (!allText) { // delete empty strings
+      int[] toDelete = new int[Text.size()];
+      List<String> toDeleteList = new ArrayList<String>();
+      for (int f = 0; f < searchable.length; f++){
+        for (int x = 0; x < Text.size(); x++) {
+          int[] buffer = findSequence(searchable[f], x, 0);
+          if (buffer[2] != 0) {
+            toDelete[x]++;
+          }
+        }
+      }
+      for (int f = 0; f< toDelete.length; f++) {
+        if (toDelete[f] == 0) {
+          toDeleteList.add(Text.get(f));
+        }
+      }
+      Text.removeAll(toDeleteList);
+    }
     for (int f = 0; f < searchable.length; f++) { //get finds
       int[] buffer = new int[3];
       while ((buffer = findSequence(searchable[f], buffer[0], buffer[1]+buffer[2]))[0] < Text.size()) {
@@ -119,7 +141,11 @@ class Main {
     searchable = new String[argsCount];
     param = new String[paramCount];
     if (searchable.length == 0) {
-      System.out.println("jgrep | usage: jgrep [SEARCH] -PARAMETERS[-v | -f] (TEXT)");
+      System.out.println("jgrep | usage: jgrep [SEARCH] -PARAMETERS[-v | -f | -c | -A] (TEXT)");
+      System.out.println("-v | verbose");
+      System.out.println("-f | file mode");
+      System.out.println("-c | ignore case");
+      System.out.println("-A | print full text");
       inputText = "null parameter";
       return null;
     }
