@@ -16,6 +16,10 @@ class Main {
   static String[] searchable;
   static String[] param;
   static char paramCharacter = '-';
+  static final String ANSI_RED = "\u001B[31m";//"\u001B[31m";
+  static final char[] ANSI_RED_CHARS = ANSI_RED.toCharArray();
+  static final String ANSI_RESET = "\u001B[0m";//"\u001B[0m";
+  static final char[] ANSI_RESET_CHARS = ANSI_RESET.toCharArray();
   static boolean verbose = false;
 
   public static void main(String[] args) {
@@ -46,11 +50,55 @@ class Main {
       System.out.println("=========================");
     }
     System.out.println("||||||||||||||||||||||||||||");
-    for (int f = 0; f < searchable.length; f++) {
+    for (int f = 0; f < searchable.length; f++) { //get finds
       int[] buffer = new int[3];
       while ((buffer = findSequence(searchable[f], buffer[0], buffer[1]+buffer[2]))[0] < Text.size()) {
         finds.add(buffer);
       }
+    }
+    for (int y = 0; y < Text.size(); y++){ //compare highlighted text
+      String tx = Text.get(y);
+      char[] bufferedString = tx.toCharArray();
+      char[] comparedSting = new char[0];
+      boolean[] highlightedChars = new boolean[bufferedString.length];
+      boolean buff = false;
+      for (int x = 0; x < tx.length(); x++) {
+        highlightedChars[x] = findHighlight(x, y);
+        if (highlightedChars[x] == true) {
+          if (x > 0) {
+            if (highlightedChars[x-1] != buff) {
+              comparedSting = concatChars(comparedSting, ANSI_RED_CHARS);
+              comparedSting = concatChars(comparedSting, new char[] { bufferedString[x] });
+              buff = true;
+            } else {
+              comparedSting = concatChars(comparedSting, new char[] { bufferedString[x] });
+            }
+          } 
+          else {
+            comparedSting = ANSI_RED_CHARS; 
+            comparedSting = concatChars(comparedSting, new char[] { bufferedString[x] });
+            buff = true;
+          }
+        }
+        if (highlightedChars[x] == false) {
+          if (x > 0) {
+            if (highlightedChars[x-1] != buff) {
+              comparedSting = concatChars(comparedSting, ANSI_RESET_CHARS);
+              comparedSting = concatChars(comparedSting, new char[] { bufferedString[x] });
+              buff = false;
+            } else {
+              comparedSting = concatChars(comparedSting, new char[] { bufferedString[x] });
+            }
+          }
+          else {
+            comparedSting = ANSI_RESET_CHARS; 
+            comparedSting = concatChars(comparedSting, new char[] { bufferedString[x] });
+            buff = false;
+          }
+        }
+      }
+      String str = String.valueOf(comparedSting);
+      System.out.println(str);
     }
   }
 
@@ -139,5 +187,26 @@ class Main {
       index[2] = 0;
       return index;
     }
+  }
+
+  static boolean findHighlight (int charIndex, int stringIndex) { //return true when char is highlighted
+    boolean itHighlight = false;
+    for (int i = 0; i < finds.size(); i++) {
+      int[] sequence = finds.get(i);
+      if (sequence[0] == stringIndex) {
+        int end = sequence[1] + sequence[2] - 1;
+        if (charIndex < end && charIndex >= (sequence[1]-1)) {
+          itHighlight = true;
+          break;
+        }
+      }
+    }
+    return itHighlight;
+  }
+
+  public static char[] concatChars(char[] first, char[] second) { //merge arrays
+    char[] result = Arrays.copyOf(first, first.length + second.length);
+    System.arraycopy(second, 0, result, first.length, second.length);
+    return result;
   }
 }
