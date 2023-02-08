@@ -66,7 +66,6 @@ class Main {
       for (int f = 0; f < searchable.length; f++){
         char[] inputBuffer = searchable[f].toCharArray(); //regex check
         String textRegex = searchable[f];
-        System.out.println(textRegex);
         boolean regexMode = false;
         if (inputBuffer[0] == regexParameter) {
           regexMode = true;
@@ -81,7 +80,6 @@ class Main {
             }
           }
           textRegex = String.valueOf(buff);
-          System.out.println(textRegex);
         }  
         for (int x = 0; x < Text.size(); x++) { //filling toDelete array
           if (regexMode) {
