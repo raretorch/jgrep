@@ -20,9 +20,9 @@ class Main {
   static String[] param;
   static char paramCharacter = '-';
   static char regexParameter = ':';
-  static final String ANSI_RED = "\u001B[30m\033[47m\u001B[4m\u001B[1m";//"\u001B[31m";
+  static final String ANSI_RED = "\u001B[30m\033[47m\u001B[4m\u001B[1m";
   static final char[] ANSI_RED_CHARS = ANSI_RED.toCharArray();
-  static final String ANSI_RESET = "\u001B[0m";//"\u001B[0m";
+  static final String ANSI_RESET = "\u001B[0m";
   static final char[] ANSI_RESET_CHARS = ANSI_RESET.toCharArray();
   static boolean allText = false;
   static boolean verbose = false;
@@ -66,6 +66,7 @@ class Main {
       for (int f = 0; f < searchable.length; f++){
         char[] inputBuffer = searchable[f].toCharArray(); //regex check
         String textRegex = searchable[f];
+        System.out.println(textRegex);
         boolean regexMode = false;
         if (inputBuffer[0] == regexParameter) {
           regexMode = true;
@@ -73,9 +74,14 @@ class Main {
           for (int q = 0; q < inputBuffer.length; q++) {
             if (q+1 != inputBuffer.length) {
               buff[q] = inputBuffer[q+1];
+              if (buff[q] == '\\') {
+                Arrays.copyOf(buff, buff.length + 1);
+                buff[q+1] = '\\';
+              }
             }
           }
           textRegex = String.valueOf(buff);
+          System.out.println(textRegex);
         }  
         for (int x = 0; x < Text.size(); x++) { //filling toDelete array
           if (regexMode) {
@@ -172,7 +178,7 @@ class Main {
         }
       }
       String str = String.valueOf(comparedSting);
-      System.out.println(str);
+      System.out.println(str + String.valueOf(ANSI_RESET_CHARS));
     }
   }
 
@@ -297,6 +303,10 @@ class Main {
     boolean itHighlight = false;
     for (int i = 0; i < finds.size(); i++) {
       int[] sequence = finds.get(i);
+      //if (Text.get(stringIndex).indexOf(charIndex) == '\n'){
+      //  itHighlight = false;
+      //  break;
+      //}
       if (sequence[0] == stringIndex) {
         int end = sequence[1] + sequence[2] - 1;
         if (end == charIndex) {
